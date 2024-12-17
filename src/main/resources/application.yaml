@@ -1,0 +1,8 @@
+ktor:
+  application:
+    modules:
+      - com.diogopavani.ApplicationKt.module
+  deployment:
+    port: 8080
+
+  development: true
