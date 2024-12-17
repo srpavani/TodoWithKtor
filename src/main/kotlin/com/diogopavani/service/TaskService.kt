@@ -1,28 +1,49 @@
 package com.diogopavani.service
 
 import com.diogopavani.models.Task
+import com.diogopavani.repository.TaskRepository
+import java.sql.SQLException
 
 object TaskService {
-    private val tasks = mutableListOf<Task>()
+    private val taskRepository = TaskRepository()
 
-    fun getAllTasks(): List<Task> = tasks
-
-    fun createTask(task: Task): Task {
-        tasks.add(task)
-        return task
+    fun getAllTasks(): List<Task> {
+        return try {
+            taskRepository.findAll()
+        } catch (e: SQLException) {
+            println("Erro ao obter tarefas: ${e.message}")
+            emptyList()
+        }
     }
-    fun updateTask(id: String, updatedTask: Task): Task? {
-        val index = tasks.indexOfFirst { it.id == id }
-        return if (index != -1) {
-            tasks[index] = updatedTask
-            updatedTask
-        } else {
+
+
+    fun createTask(task: Task): Task? {
+        return try {
+            taskRepository.create(task)
+            task // Retorna a tarefa criada
+        } catch (e: SQLException) {
+            println("Erro ao criar tarefa: ${e.message}")
             null
         }
     }
 
-    fun deleteTask(id: String): Boolean {
-        return tasks.removeIf { it.id == id }
+
+    fun updateTask(id: String, updatedTask: Task): Task? {
+        return try {
+            taskRepository.update(id, updatedTask)
+        } catch (e: SQLException) {
+            println("Erro ao atualizar tarefa: ${e.message}")
+            null
+        }
     }
 
+
+    fun deleteTask(id: String): Boolean {
+        return try {
+            taskRepository.delete(id)
+        } catch (e: SQLException) {
+            println("Erro ao deletar tarefa: ${e.message}")
+            false
+        }
+    }
 }

@@ -14,31 +14,41 @@ fun Application.configureRouting() {
             call.respondText("Hello World!")
         }
 
+        // Rota para obter todas as tarefas
         get("/tasks") {
-            call.respond(TaskService.getAllTasks())
+            val tasks = TaskService.getAllTasks()
+            call.respond(HttpStatusCode.OK, tasks)
         }
 
-        post("/tasks/add"){
+        // Rota para adicionar uma nova tarefa
+        post("/tasks/add") {
             val task = call.receive<Task>()
-            call.respond(TaskService.createTask(task))
+            val createdTask = TaskService.createTask(task)
+            if (createdTask != null) {
+                call.respond(HttpStatusCode.Created, createdTask)
+            } else {
+                call.respond(HttpStatusCode.BadRequest, "Failed to create task")
+            }
         }
 
+        // Rota para atualizar uma tarefa existente
         put("/tasks/{id}") {
             val id = call.parameters["id"] ?: return@put call.respond(HttpStatusCode.BadRequest, "Missing ID")
             val updatedTask = call.receive<Task>()
             val result = TaskService.updateTask(id, updatedTask)
             if (result != null) {
-                call.respond(result)
+                call.respond(HttpStatusCode.OK, result)
             } else {
                 call.respond(HttpStatusCode.NotFound, "Task not found")
             }
         }
 
+        // Rota para deletar uma tarefa
         delete("/tasks/{id}") {
             val id = call.parameters["id"] ?: return@delete call.respond(HttpStatusCode.BadRequest, "Missing ID")
             val deleted = TaskService.deleteTask(id)
             if (deleted) {
-                call.respond(HttpStatusCode.OK, "Task deleted")
+                call.respond(HttpStatusCode.OK, "Task deleted successfully")
             } else {
                 call.respond(HttpStatusCode.NotFound, "Task not found")
             }

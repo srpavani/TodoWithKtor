@@ -31,6 +31,11 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     implementation("io.ktor:ktor-server-content-negotiation:2.3.7")
 
+    implementation("org.postgresql:postgresql:42.6.0")
+
+    // HikariCP para pool de conexões
+    implementation("com.zaxxer:HikariCP:5.0.1")
+
     // Kotlinx serialization JSON
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
 
